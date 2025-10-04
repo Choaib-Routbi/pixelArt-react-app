@@ -101,7 +101,7 @@ body {
 }
 .one-pixel:hover {
   border: 1px solid var(--primary-color);
-  background-color: #293a5a;
+  background-color: #38415221;
 }
 .generate {
   background-color: var(--primary-color);
