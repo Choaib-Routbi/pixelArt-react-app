@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { toJpeg } from "html-to-image";
+import download from "downloadjs";
 import "./App.css";
 
 function App() {
@@ -6,6 +8,7 @@ function App() {
   const [bgChosenValue, setBgChosenValue] = useState("");
   const [pixelColor, setPixelColor] = useState("");
   const [pixelColors, setPixelColors] = useState([]);
+  const imgRef = useRef(null);
 
   const handelsize = (e) => {
     setSize(e.target.value);
@@ -29,6 +32,19 @@ function App() {
   if (gridSize === 256) gridClass = "medium-grid";
   else if (gridSize === 1024) gridClass = "large-grid";
   else if (gridSize === 4096) gridClass = "huge-grid";
+  const exportImg = async () => {
+    if (!imgRef.current) return;
+
+    try {
+      // Step 2: Convert the HTML to image data
+      const dataUrl = await toJpeg(imgRef.current);
+
+      // Step 3: Trigger the download
+      download(dataUrl, "pixel-art.jpeg");
+    } catch (err) {
+      console.error("Export failed:", err);
+    }
+  };
 
   return (
     <>
@@ -60,13 +76,16 @@ function App() {
               value={pixelColor}
               onChange={(e) => setPixelColor(e.target.value)}
             />
-            <button className="generate" onClick={gridRender}>
+            <button className="toolbar-button" onClick={gridRender}>
               generate
+            </button>
+            <button className="toolbar-button" onClick={exportImg}>
+              export as jpeg
             </button>
           </div>
         </div>
         {pixelColors.length > 0 && (
-          <div className={`grid-container ${gridClass}`}>
+          <div ref={imgRef} className={`grid-container ${gridClass}`}>
             {pixelColors.map((color, i) => (
               <div
                 key={i}
