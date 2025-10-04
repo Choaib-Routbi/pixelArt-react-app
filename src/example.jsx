@@ -1,34 +1,54 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./App.css";
 
 function App() {
   const [size, setSize] = useState("");
+  const [pixels, setPixels] = useState([]);
   const [bgChosenValue, setBgChosenValue] = useState("");
   const [pixelColor, setPixelColor] = useState("");
-  const [pixelColors, setPixelColors] = useState([]);
+  const [activeIndex, setActiveIndex] = useState("");
 
   const handelsize = (e) => {
-    setSize(e.target.value);
+    const value = e.target.value;
+    setSize(value);
+    console.log(value);
   };
 
   const gridRender = () => {
     if (!size) return;
+    console.log("gnrt clicked");
     const gridSize = Number(size);
-    setPixelColors(Array(gridSize).fill(bgChosenValue));
-  };
+    let gridClass = "small-grid";
+    if (gridSize === 256) gridClass = "medium-grid";
+    else if (gridSize === 1024) gridClass = "large-grid";
+    else if (gridSize === 4096) gridClass = "huge-grid";
 
-  const handlePixelClick = (idx) => {
-    const newColors = [...pixelColors];
-    newColors[idx] = pixelColor;
-    setPixelColors(newColors);
-  };
+    const storePixel = [];
 
-  // Determine grid class
-  let gridClass = "small-grid";
-  const gridSize = Number(size);
-  if (gridSize === 256) gridClass = "medium-grid";
-  else if (gridSize === 1024) gridClass = "large-grid";
-  else if (gridSize === 4096) gridClass = "huge-grid";
+    for (let i = 0; i < gridSize; i++) {
+      storePixel.push(<div key={i} className="one-pixel"></div>);
+    }
+    storePixel.map((item, index) => (
+      <div
+        key={index}
+        onClick={(setActiveIndex(index), console.log("a  pixel is clicked"))}
+        style={{
+          backgroundColor:
+            index == activeIndex ? `${pixelColor}` : `${bgChosenValue}`,
+        }}
+      >
+        {item}
+      </div>
+    ));
+    setPixels(
+      <div
+        className={`grid-container  ${gridClass}`}
+        style={{ backgroundColor: `${bgChosenValue}` }}
+      >
+        {storePixel}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -51,7 +71,7 @@ function App() {
               type="color"
               value={bgChosenValue}
               onChange={(e) => setBgChosenValue(e.target.value)}
-            />
+            ></input>
             <label htmlFor="inpColorChoose">color : </label>
             <input
               id="inpColorChoose"
@@ -59,24 +79,14 @@ function App() {
               type="color"
               value={pixelColor}
               onChange={(e) => setPixelColor(e.target.value)}
-            />
+            ></input>
             <button className="generate" onClick={gridRender}>
               generate
             </button>
           </div>
         </div>
-        {pixelColors.length > 0 && (
-          <div className={`grid-container ${gridClass}`}>
-            {pixelColors.map((color, i) => (
-              <div
-                key={i}
-                className="one-pixel"
-                style={{ backgroundColor: color }}
-                onClick={() => handlePixelClick(i)}
-              ></div>
-            ))}
-          </div>
-        )}
+
+        {pixels}
       </div>
     </>
   );
