@@ -32,15 +32,19 @@ function App() {
   if (gridSize === 256) gridClass = "medium-grid";
   else if (gridSize === 1024) gridClass = "large-grid";
   else if (gridSize === 4096) gridClass = "huge-grid";
+
   const exportImg = async () => {
+    const exportContainer = document.getElementById("grid-container");
     if (!imgRef.current) return;
 
     try {
       // Step 2: Convert the HTML to image data
+      exportContainer.style.margin = 0;
       const dataUrl = await toJpeg(imgRef.current);
-
       // Step 3: Trigger the download
       download(dataUrl, "pixel-art.jpeg");
+      exportContainer.style.margin = "0 auto";
+      exportContainer.style.marginBottom = "100px";
     } catch (err) {
       console.error("Export failed:", err);
     }
@@ -85,7 +89,11 @@ function App() {
           </div>
         </div>
         {pixelColors.length > 0 && (
-          <div ref={imgRef} className={`grid-container ${gridClass}`}>
+          <div
+            id="grid-container"
+            ref={imgRef}
+            className={`grid-container ${gridClass}`}
+          >
             {pixelColors.map((color, i) => (
               <div
                 key={i}

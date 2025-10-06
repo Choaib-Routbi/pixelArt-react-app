@@ -76,6 +76,7 @@ body {
   background: #202020;
   box-shadow: 0 2px 16px #0006;
   overflow: hidden;
+  margin-bottom: 100px;
 }
 .small-grid {
   grid-template-columns: repeat(8, 1fr);
